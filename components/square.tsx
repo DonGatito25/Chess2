@@ -1,28 +1,29 @@
-import type { Position } from "../lib/chess-types"
-import ChessPiece from "../components/chess-piece"
+import type { ReactNode } from "react"
 
 interface SquareProps {
-    position: Position
-    piece: { type: string; color: string } | null
-    isLight: boolean
-    isSelected: boolean
-    isValidMove: boolean
-    onClick: () => void
+  isLight: boolean
+  isSelected?: boolean
+  isValidMove?: boolean
+  onClick: () => void
+  children?: ReactNode
 }
 
-export default function Square({ position, piece, isLight, isSelected, isValidMove, onClick }: SquareProps) {
-    const baseClasses = "w-16 h-16 flex items-center justify-center relative"
-    const colorClasses = isLight ? "bg-amber-100" : "bg-amber-800"
-    const stateClasses = isSelected
-        ? "ring-4 ring-blue-500 ring-inset"
-        : isValidMove
-            ? "ring-4 ring-green-500 ring-opacity-50 ring-inset"
-            : ""
+export default function Square({ isLight, isSelected, isValidMove, onClick, children }: SquareProps) {
+  let backgroundColor = isLight ? "bg-amber-100" : "bg-amber-800"
 
-    return (
-        <div className={`${baseClasses} ${colorClasses} ${stateClasses}`} onClick={onClick}>
-            {piece && <ChessPiece type={piece.type} color={piece.color} />}
-            {isValidMove && !piece && <div className="w-4 h-4 rounded-full bg-green-500 bg-opacity-50" />}
-        </div>
-    )
+  if (isSelected) {
+    backgroundColor = "bg-blue-400"
+  } else if (isValidMove) {
+    backgroundColor = isLight ? "bg-green-200" : "bg-green-600"
+  }
+
+  return (
+    <div
+      className={`w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center ${backgroundColor} relative`}
+      onClick={onClick}
+    >
+      {isValidMove && !children && <div className="absolute w-4 h-4 rounded-full bg-green-500 opacity-60"></div>}
+      {children}
+    </div>
+  )
 }
